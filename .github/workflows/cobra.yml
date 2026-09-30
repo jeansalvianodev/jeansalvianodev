@@ -1,0 +1,34 @@
+name: cobra
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cobra
+  cancel-in-progress: true
+
+jobs:
+  gerar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: Platane/snk@v3
+        with:
+          github_user_name: ${{ github.repository_owner }}
+          outputs: |
+            dist/cobra-clara.svg?palette=github-light&color_snake=#b3372a&color_dots=#e4dac6,#b9ad98,#7d756a,#4a443d,#151310
+            dist/cobra-escura.svg?palette=github-dark&color_snake=#d4553f&color_dots=#161b22,#3a3530,#6f675b,#a89f91,#efe8da
+
+      - uses: crazy-max/ghaction-github-pages@v4
+        with:
+          target_branch: output
+          build_dir: dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
